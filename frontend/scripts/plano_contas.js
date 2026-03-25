@@ -1,34 +1,65 @@
+/**
+ * ARQUIVO: plano_contas.js
+ * PAPEL: Controlador da tela de "Plano de Contas" (Estrutura Financeira/Contábil).
+ * FLUXO: Parecido com produtos e entidades, mas possui a lógica especial de "Conta Pai" (Hierarquia de Contas).
+ */
+
+// Memória temporária da tela
 let contaEditandoId = null;
 let contasCache = [];
 
+/**
+ * FUNÇÃO ÚTIL: getPayloadConta
+ * PAPEL: Coleta e unifica os dados do formulário financeiro da tela e prepara o "envelope" de envio (JSON).
+ */
 function getPayloadConta() {
   return {
     codigo: document.getElementById("codigo").value.trim(),
     nome: document.getElementById("nome").value.trim(),
     tipo_conta: document.getElementById("tipo_conta").value.trim(),
     natureza: document.getElementById("natureza").value.trim(),
+    // Regra: Se a conta pai estiver vazia, devolve null ao invés de string vazia
     conta_pai_id: document.getElementById("conta_pai_id").value || null,
     aceita_lancamento: document.getElementById("aceita_lancamento").checked
   };
 }
 
+/**
+ * FUNÇÃO ÚTIL: preencherFormulario
+ * PAPEL: Transporte reverso. Traz do Banco para a tela visual para o usuário poder alterar um dado.
+ */
 function preencherFormulario(conta) {
   document.getElementById("codigo").value = conta.codigo || "";
   document.getElementById("nome").value = conta.nome || "";
   document.getElementById("tipo_conta").value = conta.tipo_conta || "";
   document.getElementById("natureza").value = conta.natureza || "";
   document.getElementById("conta_pai_id").value = conta.conta_pai_id || "";
+  // Checkbox (Boolean) usa a prioridade `.checked` ao invés de `.value`
   document.getElementById("aceita_lancamento").checked = !!conta.aceita_lancamento;
 }
 
+/**
+ * FUNÇÃO ÚTIL: limparFormularioConta
+ * PAPEL: Ao cancelar edição ou concluir um salvamento, limpa a sujeira do painel e oculta a gaveta.
+ */
 function limparFormularioConta() {
   document.getElementById("plano-conta-form").reset();
+  
+  // Regra de interface: checkbox volta ativado por padrão
   document.getElementById("aceita_lancamento").checked = true;
+  
   contaEditandoId = null;
   document.getElementById("submit-button").textContent = "Salvar";
   document.getElementById("cancel-edit-button").style.display = "none";
+  const panel = document.getElementById("account-form-panel");
+  if (panel) panel.classList.add("hidden");
 }
 
+/**
+ * FUNÇÃO ESPECIAL DE NEGÓCIO: atualizarSelectContaPai
+ * PAPEL: Constrói dinamicamente as opções do "Select" (Dropdown) onde escolhemos de quem esta conta é "Filha".
+ * REGRA EXCLUSIVA: Um registro não pode ser pai dele mesmo, então nós usamos o `.filter` para remover a si mesmo da lista.
+ */
 function atualizarSelectContaPai() {
   const select = document.getElementById("conta_pai_id");
   if (!select) return;
@@ -38,7 +69,9 @@ function atualizarSelectContaPai() {
   select.innerHTML = `
     <option value="">Sem conta pai</option>
     ${contasCache
+      // Filtra tirando a conta atual (não pode ser pai de si mesma, geraria um ciclo infinito)
       .filter((conta) => conta.id !== contaEditandoId)
+      // Constrói a lista de tags <option> para o HTML
       .map((conta) => `<option value="${conta.id}">${conta.codigo} - ${conta.nome}</option>`)
       .join("")}
   `;
@@ -48,25 +81,42 @@ function atualizarSelectContaPai() {
   }
 }
 
+/**
+ * FUNÇÃO PRINCIPAL: iniciarEdicaoConta
+ * QUEM CHAMA: O clique no botão "Editar".
+ */
 function iniciarEdicaoConta(id) {
+  // Passo 1: Caça a conta na lista já carregada da memória
   const conta = contasCache.find((item) => item.id === id);
   if (!conta) return;
 
+  // Passo 2: Seta a edição
   contaEditandoId = id;
+  
+  // Passo 3: Expande gaveta, atualiza as opções do Pai e então preenche com os dados velhos
+  openAccountForm(true);
   atualizarSelectContaPai();
   preencherFormulario(conta);
+  
+  // Passo 4: Feedback visual (botão Atualizar em vez de Salvar)
   document.getElementById("submit-button").textContent = "Atualizar";
   document.getElementById("cancel-edit-button").style.display = "inline-block";
   document.getElementById("form-status").textContent = `Editando conta #${id}`;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+/**
+ * FUNÇÃO PRINCIPAL: alternarStatusConta
+ * PAPEL: Trocar apenas a propriedade Booleana (Ativo/Inativo) no Supabase.
+ */
 async function alternarStatusConta(id) {
   const status = document.getElementById("plano-contas-status");
 
   try {
     status.textContent = "Atualizando status...";
+    // PATCH é o verbo HTTP especializado em atualizações cirúrgicas/parciais
     await API.patch(`/api/plano-contas/${id}/toggle`);
+    
     await carregarPlanoContas();
     status.textContent = "Status atualizado.";
   } catch (error) {
@@ -75,6 +125,10 @@ async function alternarStatusConta(id) {
   }
 }
 
+/**
+ * FUNÇÃO PRINCIPAL: carregarPlanoContas (O EXIBIDOR DA LISTA MESTRA)
+ * FLUXO: Faz GET no backend, organiza o cache global e depois "injeta" as <tr> preenchidas na <tbody> do HTML.
+ */
 async function carregarPlanoContas() {
   const tbody = document.getElementById("plano-contas-tbody");
   const status = document.getElementById("plano-contas-status");
@@ -82,21 +136,20 @@ async function carregarPlanoContas() {
   try {
     status.textContent = "Carregando contas...";
 
+    // Obtém dados fresquinhos do Banco
     const contas = await API.get("/api/plano-contas");
     contasCache = Array.isArray(contas) ? contas : [];
 
+    // Refaz as opções do formulário toda vez que baixar contas novas
     atualizarSelectContaPai();
 
     if (contasCache.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="8">Nenhuma conta cadastrada.</td>
-        </tr>
-      `;
+      tbody.innerHTML = `<tr><td colspan="8">Nenhuma conta cadastrada.</td></tr>`;
       status.textContent = "";
       return;
     }
 
+    // Regra Visual do Pai: Se tiver conta_pai encadeada trazida do backend, mostra concatendo o codigo - nome. Senão mostra "-"
     tbody.innerHTML = contasCache.map((conta) => `
       <tr>
         <td>${conta.codigo ?? "-"}</td>
@@ -118,22 +171,23 @@ async function carregarPlanoContas() {
     status.textContent = "";
   } catch (error) {
     console.error(error);
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="8">Erro ao carregar plano de contas.</td>
-      </tr>
-    `;
+    tbody.innerHTML = `<tr><td colspan="8">Erro ao carregar plano de contas.</td></tr>`;
     status.textContent = "Falha ao buscar dados da API.";
   }
 }
 
+/**
+ * FUNÇÃO PRINCIPAL: salvarPlanoConta
+ * QUEM CHAMA: Disparada pelo HTML Formulário nativo quando clica no Input "Submit".
+ */
 async function salvarPlanoConta(event) {
-  event.preventDefault();
+  event.preventDefault(); // Breca o navegador de dar um Reload bruto na página
 
   const status = document.getElementById("form-status");
   const payload = getPayloadConta();
 
   try {
+    // Decisão: Foi botão Atualizar ou botão Cadastrar Novo?
     if (contaEditandoId) {
       status.textContent = "Atualizando conta...";
       await API.put(`/api/plano-contas/${contaEditandoId}`, payload);
@@ -152,20 +206,67 @@ async function salvarPlanoConta(event) {
   }
 }
 
+// Inicia escutando se os botões existem e atribui as tarefas
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("plano-conta-form");
   const cancelBtn = document.getElementById("cancel-edit-button");
 
-  if (form) {
-    form.addEventListener("submit", salvarPlanoConta);
-  }
-
-  if (cancelBtn) {
-    cancelBtn.addEventListener("click", limparFormularioConta);
-  }
+  if (form) form.addEventListener("submit", salvarPlanoConta);
+  if (cancelBtn) cancelBtn.addEventListener("click", limparFormularioConta);
 
   carregarPlanoContas();
 });
 
+// Tornando funções disponíveis no Escopo Raiz (Window) para o HTML acessá-las
 window.iniciarEdicaoConta = iniciarEdicaoConta;
 window.alternarStatusConta = alternarStatusConta;
+
+// ==============================================
+// LÓGICA DE GAVETA DO FORMULÁRIO (Abrir/Fechar)
+// ==============================================
+const newAccountButton = document.getElementById("new-account-button");
+const accountFormPanel = document.getElementById("account-form-panel");
+const planoContaForm = document.getElementById("plano-conta-form");
+const cancelEditButton = document.getElementById("cancel-edit-button");
+const submitButton = document.getElementById("submit-button");
+const formStatus = document.getElementById("form-status");
+const aceitaLancamento = document.getElementById("aceita_lancamento");
+
+function openAccountForm(isEdit = false) {
+  if (!accountFormPanel) return;
+
+  // Mostra a Gaveta
+  accountFormPanel.classList.remove("hidden");
+
+  // Novo Cadastro joga vazio em tudo
+  if (!isEdit && planoContaForm) {
+    planoContaForm.reset();
+    if (aceitaLancamento) aceitaLancamento.checked = true;
+  }
+
+  if (submitButton && !isEdit) submitButton.textContent = "Salvar conta";
+  if (formStatus && !isEdit) formStatus.textContent = "Formulário pronto para um novo cadastro.";
+
+  const firstField = document.getElementById("codigo");
+  if (firstField) firstField.focus(); // Joga o cursor piscando pra primeira linha
+}
+
+function closeAccountForm() {
+  if (!accountFormPanel) return;
+
+  // Esconde a Gaveta
+  accountFormPanel.classList.add("hidden");
+
+  if (planoContaForm) planoContaForm.reset();
+  if (aceitaLancamento) aceitaLancamento.checked = true;
+
+  if (submitButton) submitButton.textContent = "Salvar conta";
+  if (formStatus) formStatus.textContent = "";
+}
+
+// Ouve os cliques dos botões que não estão em repetição na tabela
+if (newAccountButton) newAccountButton.addEventListener("click", () => openAccountForm(false));
+if (cancelEditButton) cancelEditButton.addEventListener("click", () => closeAccountForm());
+
+window.openAccountForm = openAccountForm;
+window.closeAccountForm = closeAccountForm;

@@ -10,7 +10,6 @@
 <body>
   <header class="topbar">
     <div class="topbar-left">
-      <div class="brand-badge">ME</div>
       <div class="brand-texts">
         <span class="brand-title">Micro ERP</span>
         <span class="brand-subtitle">Gestão de Produtos</span>
@@ -160,91 +159,6 @@
 
   <script src="/scripts/api.js"></script>
   <script src="/scripts/produtos.js"></script>
-  <script>
-    const newProductButton = document.getElementById("new-product-button");
-    const productFormPanel = document.getElementById("product-form-panel");
-    const produtoForm = document.getElementById("produto-form");
-    const cancelEditButton = document.getElementById("cancel-edit-button");
-    const submitButton = document.getElementById("submit-button");
-    const formStatus = document.getElementById("form-status");
-
-    function openProductForm(isEdit = false) {
-      if (!productFormPanel) return;
-
-      productFormPanel.classList.remove("hidden");
-
-      if (!isEdit && produtoForm) {
-        produtoForm.reset();
-
-        const unidade = document.getElementById("unidade_medida");
-        const precoCusto = document.getElementById("preco_custo");
-        const precoVenda = document.getElementById("preco_venda");
-        const estoqueAtual = document.getElementById("estoque_atual");
-        const estoqueMinimo = document.getElementById("estoque_minimo");
-
-        if (unidade) unidade.value = "UN";
-        if (precoCusto) precoCusto.value = "0.00";
-        if (precoVenda) precoVenda.value = "0.00";
-        if (estoqueAtual) estoqueAtual.value = "0.000";
-        if (estoqueMinimo) estoqueMinimo.value = "0.000";
-      }
-
-      if (submitButton && !isEdit) {
-        submitButton.textContent = "Salvar produto";
-      }
-
-      if (formStatus && !isEdit) {
-        formStatus.textContent = "Formulário pronto para um novo cadastro.";
-      }
-
-      const firstField = document.getElementById("sku");
-      if (firstField) firstField.focus();
-    }
-
-    function closeProductForm() {
-      if (!productFormPanel) return;
-
-      productFormPanel.classList.add("hidden");
-
-      if (produtoForm) {
-        produtoForm.reset();
-      }
-
-      const unidade = document.getElementById("unidade_medida");
-      const precoCusto = document.getElementById("preco_custo");
-      const precoVenda = document.getElementById("preco_venda");
-      const estoqueAtual = document.getElementById("estoque_atual");
-      const estoqueMinimo = document.getElementById("estoque_minimo");
-
-      if (unidade) unidade.value = "UN";
-      if (precoCusto) precoCusto.value = "0.00";
-      if (precoVenda) precoVenda.value = "0.00";
-      if (estoqueAtual) estoqueAtual.value = "0.000";
-      if (estoqueMinimo) estoqueMinimo.value = "0.000";
-
-      if (submitButton) {
-        submitButton.textContent = "Salvar produto";
-      }
-
-      if (formStatus) {
-        formStatus.textContent = "";
-      }
-    }
-
-    if (newProductButton) {
-      newProductButton.addEventListener("click", () => {
-        openProductForm(false);
-      });
-    }
-
-    if (cancelEditButton) {
-      cancelEditButton.addEventListener("click", () => {
-        closeProductForm();
-      });
-    }
-
-    window.openProductForm = openProductForm;
-    window.closeProductForm = closeProductForm;
-  </script>
+  
 </body>
 </html>

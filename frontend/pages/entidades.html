@@ -10,7 +10,6 @@
 <body>
   <header class="topbar">
     <div class="topbar-left">
-      <div class="brand-badge">ME</div>
       <div class="brand-texts">
         <span class="brand-title">Micro ERP</span>
         <span class="brand-subtitle">Gestão de Entidades</span>
@@ -186,67 +185,6 @@
 
   <script src="/scripts/api.js"></script>
   <script src="/scripts/entidades.js"></script>
-  <script>
-    const newEntityButton = document.getElementById("new-entity-button");
-    const entityFormPanel = document.getElementById("entity-form-panel");
-    const entidadeForm = document.getElementById("entidade-form");
-    const cancelEditButton = document.getElementById("cancel-edit-button");
-    const submitButton = document.getElementById("submit-button");
-    const formStatus = document.getElementById("form-status");
-
-    function openEntityForm(isEdit = false) {
-      if (!entityFormPanel) return;
-
-      entityFormPanel.classList.remove("hidden");
-
-      if (!isEdit && entidadeForm) {
-        entidadeForm.reset();
-      }
-
-      if (submitButton && !isEdit) {
-        submitButton.textContent = "Salvar entidade";
-      }
-
-      if (formStatus && !isEdit) {
-        formStatus.textContent = "Formulário pronto para um novo cadastro.";
-      }
-
-      const firstField = document.getElementById("tipo_entidade");
-      if (firstField) firstField.focus();
-    }
-
-    function closeEntityForm() {
-      if (!entityFormPanel) return;
-
-      entityFormPanel.classList.add("hidden");
-
-      if (entidadeForm) {
-        entidadeForm.reset();
-      }
-
-      if (submitButton) {
-        submitButton.textContent = "Salvar entidade";
-      }
-
-      if (formStatus) {
-        formStatus.textContent = "";
-      }
-    }
-
-    if (newEntityButton) {
-      newEntityButton.addEventListener("click", () => {
-        openEntityForm(false);
-      });
-    }
-
-    if (cancelEditButton) {
-      cancelEditButton.addEventListener("click", () => {
-        closeEntityForm();
-      });
-    }
-
-    window.openEntityForm = openEntityForm;
-    window.closeEntityForm = closeEntityForm;
-  </script>
+  
 </body>
 </html>

@@ -10,7 +10,6 @@
 <body>
   <header class="topbar">
     <div class="topbar-left">
-      <div class="brand-badge">ME</div>
       <div class="brand-texts">
         <span class="brand-title">Micro ERP</span>
         <span class="brand-subtitle">Painel de Gestão</span>
@@ -81,31 +80,7 @@
   </main>
 
   <script src="/scripts/api.js"></script>
-  <script>
-    const syncUserFields = () => {
-      const nameElement = document.getElementById("user-name");
-      const roleElement = document.getElementById("user-role");
-      const inlineName = document.getElementById("user-name-inline");
-      const inlineRole = document.getElementById("user-role-inline");
-
-      const name = nameElement?.textContent?.trim() || "usuário";
-      const role = roleElement?.textContent?.trim() || "-";
-
-      inlineName.textContent = name;
-      inlineRole.textContent = role;
-    };
-
-    const userNameNode = document.getElementById("user-name");
-    const userRoleNode = document.getElementById("user-role");
-
-    if (userNameNode && userRoleNode) {
-      const observer = new MutationObserver(syncUserFields);
-      observer.observe(userNameNode, { childList: true, subtree: true, characterData: true });
-      observer.observe(userRoleNode, { childList: true, subtree: true, characterData: true });
-    }
-
-    syncUserFields();
-  </script>
+  
   <script src="/scripts/dashboard_page.js"></script>
 </body>
 </html>

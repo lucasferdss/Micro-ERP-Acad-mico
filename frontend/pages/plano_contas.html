@@ -10,7 +10,6 @@
 <body>
   <header class="topbar">
     <div class="topbar-left">
-      <div class="brand-badge">ME</div>
       <div class="brand-texts">
         <span class="brand-title">Micro ERP</span>
         <span class="brand-subtitle">Gestão do Plano de Contas</span>
@@ -166,73 +165,6 @@
 
   <script src="/scripts/api.js"></script>
   <script src="/scripts/plano_contas.js"></script>
-  <script>
-    const newAccountButton = document.getElementById("new-account-button");
-    const accountFormPanel = document.getElementById("account-form-panel");
-    const planoContaForm = document.getElementById("plano-conta-form");
-    const cancelEditButton = document.getElementById("cancel-edit-button");
-    const submitButton = document.getElementById("submit-button");
-    const formStatus = document.getElementById("form-status");
-    const aceitaLancamento = document.getElementById("aceita_lancamento");
-
-    function openAccountForm(isEdit = false) {
-      if (!accountFormPanel) return;
-
-      accountFormPanel.classList.remove("hidden");
-
-      if (!isEdit && planoContaForm) {
-        planoContaForm.reset();
-        if (aceitaLancamento) aceitaLancamento.checked = true;
-      }
-
-      if (submitButton && !isEdit) {
-        submitButton.textContent = "Salvar conta";
-      }
-
-      if (formStatus && !isEdit) {
-        formStatus.textContent = "Formulário pronto para um novo cadastro.";
-      }
-
-      const firstField = document.getElementById("codigo");
-      if (firstField) firstField.focus();
-    }
-
-    function closeAccountForm() {
-      if (!accountFormPanel) return;
-
-      accountFormPanel.classList.add("hidden");
-
-      if (planoContaForm) {
-        planoContaForm.reset();
-      }
-
-      if (aceitaLancamento) {
-        aceitaLancamento.checked = true;
-      }
-
-      if (submitButton) {
-        submitButton.textContent = "Salvar conta";
-      }
-
-      if (formStatus) {
-        formStatus.textContent = "";
-      }
-    }
-
-    if (newAccountButton) {
-      newAccountButton.addEventListener("click", () => {
-        openAccountForm(false);
-      });
-    }
-
-    if (cancelEditButton) {
-      cancelEditButton.addEventListener("click", () => {
-        closeAccountForm();
-      });
-    }
-
-    window.openAccountForm = openAccountForm;
-    window.closeAccountForm = closeAccountForm;
-  </script>
+  
 </body>
 </html>
