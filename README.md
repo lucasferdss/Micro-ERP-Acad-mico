@@ -1,31 +1,104 @@
-# Micro-ERP Acadêmico
+# 🚀 Micro-ERP Acadêmico
 
-Sistema acadêmico de gestão integrada desenvolvido para proporcionar uma fundação ágil, moderna e escalável, focado em **Cadastros, Organização e Segurança**.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Em%20Desenvolvimento-1f6feb?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Python-Puro-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Supabase-Backend%20as%20a%20Service-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" />
+  <img src="https://img.shields.io/badge/Frontend-Vanilla%20HTML%20%7C%20CSS%20%7C%20JS-orange?style=for-the-badge" />
+</p>
 
-Nesta versão mais recente, o sistema evoluiu para uma **arquitetura Serverless/BaaS (Backend as a Service) 100% nativa**, eliminando frameworks pesados e adotando **Python Puro** acoplado ao poderoso **Supabase (PostgreSQL + Auth)**.
-
----
-
-##  Funcionalidades Principais
-
-Este Micro-ERP já conta com uma estrutura robusta dividida nos seguintes módulos:
-
-- ** Autenticação Segura:** Autenticação gerenciada diretamente pelo Supabase Auth. O servidor Python gerencia o acesso via cookies e protege as rotas privadas ("Dashboard, Produtos, Contas, Entidades"), redirecionando tentativas não autorizadas para a tela de Login elegante.
-- ** Dashboard Interativo:** Painel de boas-vindas com visualização rápida do perfil do usuário logado e navegação simplificada para os atalhos vitais do ERP.
-- ** Gestão de Entidades:** Cadastro completo de **Clientes e Fornecedores**. Permite incluir CPF/CNPJ, Inscrição Estadual, Razão Social, endereços detalhados e contatos.
-- ** Controle de Produtos:** Catálogo estruturado de produtos. Gerencie **SKU**, Nome, Unidade de Medida, Preços (Custo e Venda) com cálculo de inserção, bem como controle rigoroso de **Estoque Atual e Estoque Mínimo**.
-- ** Plano de Contas:** Gestão da hierarquia contábil da sua empresa. Permite cadastrar contas com seus tipos (Ativo, Passivo, PL, Receita, Despesa), Natureza (Devedora/Credora) e definir qual é a "Conta Pai" dentro do escopo do balanço.
+<p align="center">
+  <b>Sistema acadêmico de gestão integrada</b><br>
+  desenvolvido para proporcionar uma base <b>ágil, moderna, organizada e escalável</b>,
+  com foco em <b>Cadastros, Organização e Segurança</b>.
+</p>
 
 ---
 
-## 🛠 Tecnologias Utilizadas
+## ✨ Sobre o Projeto
 
-Para garantir a **maior pureza, legibilidade e performance possível**, todo o código foi refatorado eliminando dependências engessadas (como ORMs complexos e renderizadores de tela):
+O **Micro-ERP Acadêmico** é um sistema de gestão integrado criado com objetivo educacional, simulando a estrutura inicial de um ERP real para pequenas empresas comerciais.
 
-*   **Backend (API & Routes):** Python Puro (`http.server` nativo no Python). 
-*   **Frontend (Views & Logic):** Vanilla HTML5, CSS3 Moderno (Variáveis globais, CSS puro isolado por tela) e Vanilla JavaScript modular. Nenhuma biblioteca ou framework SPA é necessário.
-*   **Banco de Dados & Autenticação:** Supabase (PostgreSQL) com integração via client oficial do Supabase.
-*   **Dependências Python:** Estritamente limitadas ao necessário: `supabase` e `python-dotenv`.
+Nesta versão mais recente, o projeto evoluiu para uma arquitetura **Serverless / BaaS (Backend as a Service) 100% nativa**, eliminando frameworks pesados e adotando uma abordagem mais enxuta com:
+
+- 🐍 **Python Puro**
+- 🗄️ **Supabase (PostgreSQL + Auth)**
+- 🎨 **Frontend em HTML, CSS e JavaScript Vanilla**
+- 🔐 **Autenticação segura com Supabase Auth**
+
+O foco principal desta etapa do sistema está em construir um **alicerce sólido**, cobrindo autenticação, cadastros mestres, navegação interna e organização contábil básica.
+
+---
+
+## 🎯 Funcionalidades Principais
+
+### 🔐 Autenticação Segura
+- Login integrado ao **Supabase Auth**
+- Controle de sessão via cookies
+- Proteção de rotas privadas
+- Redirecionamento automático para a tela de login em acessos não autorizados
+
+### 📊 Dashboard Interativo
+- Painel inicial com mensagem de boas-vindas
+- Exibição do perfil do usuário logado
+- Navegação rápida entre os módulos principais do sistema
+
+### 👥 Gestão de Entidades
+Cadastro completo de **Clientes e Fornecedores**, com suporte para:
+- CPF/CNPJ
+- Inscrição Estadual
+- Razão Social / Nome Fantasia
+- Endereço completo
+- Informações de contato
+
+### 📦 Controle de Produtos
+Gerenciamento completo do catálogo de produtos com:
+- SKU
+- Nome do produto
+- Unidade de medida
+- Preço de custo
+- Preço de venda
+- Estoque atual
+- Estoque mínimo
+
+### 🧾 Plano de Contas
+Estruturação contábil básica com suporte para:
+- Tipo da conta
+- Natureza contábil
+- Conta pai
+- Hierarquia de contas dentro do balanço
+
+---
+
+## 🧠 Diferenciais do Projeto
+
+- ✅ Arquitetura simples e didática
+- ✅ Fácil de entender e apresentar academicamente
+- ✅ Separação clara entre backend e frontend
+- ✅ Uso mínimo de dependências externas
+- ✅ Código mais limpo, leve e focado em aprendizado real
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+### Backend
+- 🐍 **Python Puro**
+- 🌐 `http.server` nativo do Python
+
+### Frontend
+- 🌍 **HTML5**
+- 🎨 **CSS3**
+- ⚡ **JavaScript Vanilla**
+
+### Banco de Dados e Autenticação
+- 🗄️ **Supabase**
+- 🔑 **Supabase Auth**
+- 🐘 **PostgreSQL**
+
+### Dependências Python
+- `supabase`
+- `python-dotenv`
 
 ---
 
